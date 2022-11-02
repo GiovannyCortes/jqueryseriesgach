@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Personaje</title>
+</head>
+<body>
+    <div id="menu"></div>
+    <div class="text-center">
+        <h1 class='pb-2 pt-1 text-bg-dark'>Nuevo Personaje</h1>
+        <form class='w-75 mx-auto mt-2' onsubmit="insertarPersonaje();return false;">
+            <label class='form-label'>Nombre:</label>
+            <input type='text' id="cajaNombre" required class='form-control'/>
+    
+            <label class='form-label mt-2'>Imagen:</label>
+            <input type='text' id="cajaImagen" required class='form-control'/>
+    
+            <label class='form-label mt-2'>Serie:</label>
+            <select class='form-control' id="selectSeries" required></select>
+    
+            <button class='btn btn-success my-3'>
+                Insertar Personaje
+            </button>
+        </form>
+    </div>
+
+    <script src="js/jquery-3.6.1.min.js"></script>
+    <script>
+        var urlSeries = "https://apiseriespersonajes2023.azurewebsites.net";
+
+        $(document).ready(function() {
+            $("#menu").load("menu.html");
+            getSeries();
+        })
+
+        function getSeries() {
+            var request = "/api/Series";
+            $.ajax({
+                'url': urlSeries + request,
+                'method': 'GET',
+                'dataType': 'JSON',
+                success : function(data) {
+                    $.each(data, function(index, serie){
+                        var option = $("<option>", {
+                            "text":serie.nombre,
+                            "value":serie.idSerie
+                        });
+                        $("#selectSeries").append(option);
+                    });
+                }
+            });
+        }
+
+        function insertarPersonaje() {
+            var selectIdSerie = $("#selectSeries").val(); 
+            
+            var personaje = new Object();
+                personaje.idPersonaje = 0;
+                personaje.nombre = $("#cajaNombre").val();
+                personaje.imagen = $("#cajaImagen").val();
+                personaje.idSerie = parseInt(selectIdSerie);
+
+            var dataJson = JSON.stringify(personaje);
+            var request = "/api/Personajes/";
+
+            $.ajax({
+                "url": urlSeries + request,
+                "type": "POST",
+                "data": dataJson,
+                "contentType": "application/json",
+                success: function() {
+                    window.location.replace("personajes.html?idSerie=" + selectIdSerie);
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>

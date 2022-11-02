@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series</title>
+</head>
+<body>
+
+    <div id="menu"></div>
+    <div id="cajaSerie" class="w-75 border rounded my-2 mx-auto">
+        <img id="serieImage" class="rounded mx-auto mt-3 d-block" style="max-height: 40vh; max-width: 70vw;"/>
+        <h2 id="serieName" class="mx-auto mt-2 text-center"></h2>
+        <p id="seriePuntuacion" class="mx-3 text-center fs-6"></p>
+        <div class="mx-auto mb-3 text-center">
+            <a id="btnPersonajes" class="btn btn-success">Personajes</a> &nbsp;
+        </div>
+    </div>
+
+    <script src="./js/jquery-3.6.1.min.js"></script>
+    <script>
+        var urlSeries = "https://apiseriespersonajes2023.azurewebsites.net";
+        var paramenters = new URLSearchParams(window.location.search);
+
+        $(document).ready(function() {
+            $("#menu").load("menu.html");
+            getSerie();
+        })
+
+        function getSerie() {
+            var url = urlSeries + "/api/Series/" + paramenters.get("idSerie"); 
+            $.ajax({
+                'url' : url,
+                'method' : "GET",
+                'dataType' : 'JSON',
+                success : function(data) {
+                    document.title = "Serie: " + data.nombre; // Un detallito para que quede mejor :)
+                    $("#serieImage").attr("src",data.imagen);
+                    $("#serieName").text(data.nombre);
+                    $("#seriePuntuacion").text(data.puntuacion);
+
+                    $("#btnPersonajes").attr("href","personajes.html?idSerie=" + data.idSerie);
+                }
+            });      
+        }
+        
+        function montarSerie() {
+            var imagenSerie = $("<img>", {
+                "src" : ""
+            });            
+        }
+
+    </script>
+</body>
+</html>
